@@ -139,7 +139,6 @@ static vector<int> reverseSorted(vector<int> arr) {
 
 static vector<int> almostSorted(vector<int> arr) {
     sort(arr.begin(), arr.end());
-    
     if (arr.size() >= 2) {
         swap(arr[arr.size() - 2], arr[arr.size() - 1]);
     }
