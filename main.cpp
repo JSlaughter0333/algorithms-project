@@ -7,16 +7,16 @@
 #include <algorithm>
 
 using namespace std;
-static final int[] size_check = {100, 1000, 10000, 100000};
-static long long startTime;
-static long long endTime;
-static vector<long long> runtime;
-static vector<int> swapCheck;
-static vector<int> comparisonCheck;
-static int swaps = 0, comparisons = 0;
+vector<int> size_check = {100, 1000, 10000, 100000};
+long long startTime;
+long long endTime;
+vector<long long> runtime;
+vector<int> swapCheck;
+vector<int> comparisonCheck;
+int swaps = 0, comparisons = 0;
 
 static void testSorts(int n);
-static void quickSortInitializer(vector<int>& arr, int left, int right, key);
+static void quickSortInitializer(vector<int>& arr, int left, int right, int key);
 static vector<int> randDistArr(int n);
 static vector<int> copyArr(const vector<int>& arr);
 static vector<int> sorted(vector<int> arr);
@@ -92,7 +92,7 @@ int main() {
 
 //16 tests per each size option
 static void testSorts(int n) {
-    vector<int> original(n) = randDistArr(n);
+    vector<int> original = randDistArr(n);
     vector<int> almost = almostSorted(original);
     vector<int> reverse = reverseSorted(original);
     vector<int> sorteded = sorted(original);
@@ -141,7 +141,7 @@ static void testSorts(int n) {
 }
 
 //initializer function with the job of checking how long each run takes in nanoseconds and directs to the correct method
-static void quickSortInitializer(vector<int>& arr, int left, int right, key) {
+static void quickSortInitializer(vector<int>& arr, int left, int right, int key) {
     startTime = chrono::duration_cast<chrono::nanoseconds>(chrono::steady_clock::now().time_since_epoch()).count();
     //Check here to lead to correct quickSort implementation
     switch (key) {
