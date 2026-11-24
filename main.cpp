@@ -5,15 +5,19 @@
 #include <ctime>
 #include <vector>
 #include <algorithm>
+#include <iomanip>  //for aligned table columns
+#include <fstream> //wrting to csv
+#include <string>
+
 
 using namespace std;
-vector<int> size_check = {100, 1000, 10000, 100000};
-long long startTime;
-long long endTime;
-vector<long long> runtime;
-vector<int> swapCheck;
-vector<int> comparisonCheck;
-int swaps = 0, comparisons = 0;
+static const int size_check[] = {100, 1000, 10000, 100000};
+static long long startTime;
+static long long endTime;
+static vector<long long> runtime;
+static vector<long long> swapCheck;
+static vector<long long> comparisonCheck;
+static long long swaps = 0, comparisons = 0;
 
 static void testSorts(int n);
 static void quickSortInitializer(vector<int>& arr, int left, int right, int key);
@@ -76,18 +80,53 @@ static void quickSort(vector<int>& arr, int left, int right, int key) {
     }
 }
 
+
+static void displayResults() {
+    const int sizes[4] = {100, 1000, 10000, 100000};
+    const string dataNames[4] = {"Random", "Nearly sorted", "Reverse sorted", "Sorted"};
+    const string pivotNames[4] = {"First", "Last", "Median-of-3", "Random"};
+
+    // safety check: we expect 4 sizes x 4 datasets x 4 pivots = 64 results
+    if (runtime.size() != 64 || swapCheck.size() != 64 || comparisonCheck.size() != 64) {
+        cout << "Results are incomplete, nothing to display." << endl;
+        return;
+    }
+
+    ofstream csv("results.csv");
+    csv << "Size,Dataset,Pivot,Runtime_ns,Swaps,Comparisons\n";
+
+    for (int s = 0; s < 4; s++) {
+        cout << "\n=== Array size: " << sizes[s] << " ===\n";
+        cout << left << setw(16) << "Dataset" << setw(14) << "Pivot"
+             << right << setw(16) << "Runtime (ns)" << setw(16) << "Swaps"
+             << setw(16) << "Comparisons" << "\n";
+        for (int d = 0; d < 4; d++) {
+            for (int k = 0; k < 4; k++) {
+                int idx = s * 16 + d * 4 + k;
+                cout << left << setw(16) << dataNames[d] << setw(14) << pivotNames[k]
+                     << right << setw(16) << runtime[idx] << setw(16) << swapCheck[idx]
+                     << setw(16) << comparisonCheck[idx] << "\n";
+                csv << sizes[s] << "," << dataNames[d] << "," << pivotNames[k] << ","
+                    << runtime[idx] << "," << swapCheck[idx] << "," << comparisonCheck[idx] << "\n";
+            }
+        }
+    }
+    csv.close();
+    cout << "\nResults saved to results.csv" << endl;
+}
+
 int main() {
   //time call to seed for random number calls
   srand(time(0));
 
 
   //for loop for the test runs
-  for (int i = 0; i < size_check.size(); i++) {
+  for (int i = 0; i < 4; i++) {
     testSorts(size_check[i]);
   }
 
   //Displaying data goes here
-  
+  displayResults();
 }
 
 //16 tests per each size option
